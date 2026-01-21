@@ -40,11 +40,11 @@ app.post('/items', async (req, res) => {
 });
 
 // ✅ Serve React build folder
-app.use(express.static(path.join(__dirname, "../build")));
+app.use(express.static(path.join(__dirname, "../2-myntra-clone/build")));
 
 // ✅ React routing support (for React Router)
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../build/index.html"));
+  res.sendFile(path.join(__dirname, "../2-myntra-clone/build/index.html"));
 });
 
 
