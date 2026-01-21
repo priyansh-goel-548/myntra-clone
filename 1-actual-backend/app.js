@@ -1,33 +1,33 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+const express = require("express");
+const bodyParser = require("body-parser");
 const path = require("path");
 
-const { getStoredItems, storeItems } = require('./data/items');
+const { getStoredItems, storeItems } = require("./data/items");
 
 const app = express();
 
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
 
-app.get('/items', async (req, res) => {
+app.get("/items", async (req, res) => {
   const storedItems = await getStoredItems();
   await new Promise((resolve, reject) => setTimeout(() => resolve(), 1500));
   res.json({ items: storedItems });
 });
 
-app.get('/items/:id', async (req, res) => {
+app.get("/items/:id", async (req, res) => {
   const storedItems = await getStoredItems();
   const item = storedItems.find((item) => item.id === req.params.id);
   res.json({ item });
 });
 
-app.post('/items', async (req, res) => {
+app.post("/items", async (req, res) => {
   const existingItems = await getStoredItems();
   const itemData = req.body;
   const newItem = {
@@ -36,21 +36,15 @@ app.post('/items', async (req, res) => {
   };
   const updatedItems = [newItem, ...existingItems];
   await storeItems(updatedItems);
-  res.status(201).json({ message: 'Stored new item.', item: newItem });
+  res.status(201).json({ message: "Stored new item.", item: newItem });
 });
 
 // ✅ Serve React build folder
-app.use(
-  express.static(path.join(__dirname, "../2-myntra-clone/2-myntra-clone/build"))
-);
+app.use(express.static(path.join(__dirname, "../2-myntra-clone/build")));
 
 app.get("*", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "../2-myntra-clone/2-myntra-clone/build/index.html")
-  );
+  res.sendFile(path.join(__dirname, "../2-myntra-clone/build/index.html"));
 });
-
-
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log("Server running on " + PORT));
